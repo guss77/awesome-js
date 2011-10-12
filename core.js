@@ -58,27 +58,34 @@
             $super = null; // so fake it like he used it properly
         }
 
+        var hasSuperArg = function(method){
+            var argnames = method.toString().replace(new RegExp('/\\*.*?\\*/'),'').match(/^[^({]+\(\s*([^){},\s]+)/);
+            return (argnames && argnames[1] == '$super');
+        };
+
         var callWrapper = function(method /*[, arg1 [..]]*/){
             if (typeof this[method] != 'function') // sanity test
                 return undefined; // this actually happens for classes with default constructors, so just ignore it
             var args = Array.prototype.slice.call(arguments,1);
-            // check if the user wants to access $super
-            var argnames = this[method].toString().replace(new RegExp('/\\*.*?\\*/'),'').match(/^[^({]+\(\s*([^){},\s]+)/);
-            if (argnames && argnames[1] == '$super')
-                args.splice(0,0,$super[method] instanceof Function ? $super[method] : function(){});
+            superMethod = $super && $super.prototype && $super.prototype[method] instanceof Function ?
+                bindCall(this, $super.prototype[method]) : function() {};
             return this[method].apply(this, args);
         };
 
         var ctor = function() {
             var args = Array.prototype.slice.call(arguments);
-            args.splice(0,0,members.init);
-            callWrapper.apply(this,args);
+            if (members.init && hasSuperArg(members.init)) {
+                args.unshift(members.init);
+                callWrapper.apply(this,args);
+            } else {
+                members.init.apply(this,args);
+            }
             return this;
         };
 
         for (var p in members) {
             if (typeof members[p] == 'function') {
-                ctor.prototype[p] = bindCall(undefined,callWrapper,members[p]);
+                ctor.prototype[p] = hasSuperArg(members[p]) ? bindCall(undefined,callWrapper,members[p]) : members[p];
                 ctor.prototype[p].bind = bindCall; // provide bind functionality to my methods
             } else
                 ctor.prototype[0] = members[p];
