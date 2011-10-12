@@ -1,18 +1,46 @@
-# README for a newly created project.
+Awesome JS:
 
-There are a couple of things you should do first, before you can use all of Git's power:
+Awesome JS is an exercise in Javascript framework building. 
 
-  * Add a remote to this project: in the Cloud9 IDE command line, you can execute the following commands
-    `git remote add [remote name] [remote url (eg. 'git@github.com:/ajaxorg/node_chat')]` [Enter]
-  * Create new files inside your project
-  * Add them to to Git by executing the following command
-    `git add [file1, file2, file3, ...]` [Enter]
-  * Create a commit which can be pushed to the remote you just added
-    `git commit -m 'added new files'` [Enter]
-  * Push the commit the remote
-    `git push [remote name] master` [Enter]
+The object of this exercise is to create a small and extensible framework that excells at sandboxing and allows
+applications to have a minimal footprint on the global namespace of the Javascript container (e.g. a web 
+browser's window object, for example) - this can be as small as a single function.
 
-That's it! If this doesn't work for you, please visit the excellent resources from [Github.com](http://help.github.com) and the [Pro Git](http://http://progit.org/book/) book.
-If you can't find your answers there, feel free to ask us via Twitter (@cloud9ide), [mailing list](groups.google.com/group/cloud9-ide) or IRC (#cloud9ide on freenode).
+None the less, users should be able to build complex applications using a simple but rich syntax with strong OO 
+semantics - specifically using encapsulation data hiding and inheritance.
 
-Happy coding!
+Awesome JS has two main actions that can be utilized:
+* Extending the library with a module
+* Using the library with all current modules
+
+To extend the framework's library, call the 'add' function using the following syntax:
+
+    awsm().add('package.name.of.module',function($){
+        return // module content, for example a bunch of static utilities:
+            { 
+                sayHello: function(name) {
+                    alert('Hello ' + (!!name ? name : 'world'));
+                }
+            };
+    });
+
+To use the existing set of capabilities, just call 'use', passing it the closure that should be executed. In
+both cases ('add' and 'use') Awesome JS will pass a reference to the library as the first argument of the closure,
+allowing full access to the existing functionality:
+
+    awsm().use(function($) {
+        var BaseClass = $.oop.createClass({
+            init: function() {
+                alert('BaseClass created');
+            }
+        });
+        
+        var ChildClass = $.oop.createClass(BaseClass, {
+            init: function($super) {
+                $super();
+                alert('ChildClass created');
+            }
+        });
+        
+        var ref = new ChildClass();
+    });
