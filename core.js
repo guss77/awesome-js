@@ -59,14 +59,14 @@
         }
 
         var callWrapper = function(method /*[, arg1 [..]]*/){
-            if (typeof method != 'function') // sanity test
+            if (typeof this[method] != 'function') // sanity test
                 return undefined; // this actually happens for classes with default constructors, so just ignore it
             var args = Array.prototype.slice.call(arguments,1);
             // check if the user wants to access $super
-            var argnames = method.toString().replace(new RegExp('/\\*.*?\\*/'),'').match(/^[^({]+\(\s*([^){},\s]+)/);
+            var argnames = this[method].toString().replace(new RegExp('/\\*.*?\\*/'),'').match(/^[^({]+\(\s*([^){},\s]+)/);
             if (argnames && argnames[1] == '$super')
-                args.splice(0,0,$super);
-            return method.apply(this, args);
+                args.splice(0,0,$super[method] instanceof Function ? $super[method] : function(){});
+            return this[method].apply(this, args);
         };
 
         var ctor = function() {
@@ -77,8 +77,6 @@
         };
 
         for (var p in members) {
-            if (p == 'init')
-                continue;
             if (typeof members[p] == 'function') {
                 ctor.prototype[p] = bindCall(undefined,callWrapper,members[p]);
                 ctor.prototype[p].bind = bindCall; // provide bind functionality to my methods
