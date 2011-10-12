@@ -15,32 +15,32 @@ Awesome JS has two main actions that can be utilized:
 
 To extend the framework's library, call the 'add' function using the following syntax:
 
-    awsm().add('package.name.of.module',function($){
-        return // module content, for example a bunch of static utilities:
-            { 
-                sayHello: function(name) {
-                    alert('Hello ' + (!!name ? name : 'world'));
-                }
-            };
-    });
+	awsm().add('package.name.of.module',function($){
+		return // module content, for example a bunch of static utilities:
+			{ 
+				sayHello: function(name) {
+					alert('Hello ' + (!!name ? name : 'world'));
+				}
+			};
+	});
 
 To use the existing set of capabilities, just call 'use', passing it the closure that should be executed. In
 both cases ('add' and 'use') Awesome JS will pass a reference to the library as the first argument of the closure,
 allowing full access to the existing functionality:
 
-    awsm().use(function($) {
-        var BaseClass = $.oop.createClass({
-            init: function() {
-                alert('BaseClass created');
-            }
-        });
-        
-        var ChildClass = $.oop.createClass(BaseClass, {
-            init: function($super) {
-                $super();
-                alert('ChildClass created');
-            }
-        });
-        
-        var ref = new ChildClass();
-    });
+	awsm().use(function($) {
+		var BaseClass = $.oop.createClass({
+			init: function() {
+				alert('BaseClass created');
+			}
+		});
+		
+		var ChildClass = $.oop.createClass(BaseClass, {
+			init: function($super) {
+				$super();
+				alert('ChildClass created');
+			}
+		});
+		
+		var ref = new ChildClass();
+	});
