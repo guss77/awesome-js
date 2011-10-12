@@ -44,3 +44,14 @@ allowing full access to the existing functionality:
 		
 		var ref = new ChildClass();
 	});
+
+Hint: if you don't care about contaminating the global namespace, you can use Awesome JS like any other OOP helper:
+
+	var MyClass = awsm().use(function($){ return $.oop.createClass({
+		init: function() {
+		},
+		doSomething: function() {
+		}
+	}) });
+
+The syntax may be a bit verbose though :-)
